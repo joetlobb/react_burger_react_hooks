@@ -21,6 +21,7 @@ const Orders = props => {
         ingredients={order.ingredients}
         price={+order.price} />
     ));
+    console.log(orders);
   };
 
   return (
