@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import axios from '../../axios-orders';
@@ -8,36 +8,27 @@ import Aux from '../../hoc/Aux/Aux';
 import * as actions from '../../store/actions/index';
 import Spinner from '../../components/UI/Spinner/Spinner';
 
-class Orders extends Component {
-  componentDidMount() {
-    this.props.onFetchOrders(this.props.token, this.props.userId);
-  }
+const Orders = props => {
+  useEffect(() => {
+    props.onFetchOrders(props.token, props.userId);
+    console.log('useEffect() ORDERS.JS RUNNING');
+  }, []);
 
-  errorConfirmedHandler = () => {
-    this.setState({ loading: false, error: false })
-  }
+  let orders = <Spinner />
+  if (!props.loading) {
+    orders = props.orders.map(order => (
+      <Order key={order.id}
+        ingredients={order.ingredients}
+        price={+order.price} />
+    ));
+  };
 
-  render() {
-    let orders = <Spinner />
-    if (!this.props.loading) {
-      orders = this.props.orders.map(order => (
-        <Order key={order.id}
-          ingredients={order.ingredients}
-          price={+order.price} />
-      ))
-    }
-    return (
-      <Aux>
-        {/* <Modal
-          show={this.state.error}
-          modalClosed={this.errorConfirmedHandler}
-        >{this.props.error ? <p style={{ margin: '0' }} >Error!</p> : null}
-        </Modal> */}
-        {orders}
-      </Aux>
-    );
-  }
-}
+  return (
+    <Aux>
+      {orders}
+    </Aux>
+  );
+};
 
 const mapStateToProps = state => {
   return {
@@ -45,11 +36,13 @@ const mapStateToProps = state => {
     loading: state.order.loading,
     token: state.auth.token,
     userId: state.auth.userId
-  }
-}
+  };
+};
+
 const mapDispatchToProps = dispatch => {
   return {
     onFetchOrders: (token, userId) => dispatch(actions.fetchOrders(token, userId))
-  }
-}
+  };
+};
+
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(Orders, axios));
