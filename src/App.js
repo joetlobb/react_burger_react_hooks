@@ -18,10 +18,12 @@ const Auth = React.lazy(() => {
 });
 
 const App = props => {
+  const { onAutoLogin } = props;
+
   useEffect(() => {
-    props.onAutoLogin();
+    onAutoLogin();
     console.log('AUTO LOGIN RUNNING');
-  }, []);
+  }, [onAutoLogin]);
 
   let routes = (
     <Switch>
